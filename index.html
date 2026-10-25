@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#08090c">
+<title>PC ZONE STORE</title>
+
+<style>
+:root {
+  --red: #ff2038;
+  --bg: #08090c;
+  --card: #17161e;
+  --border: #48232e;
+  --text: #f5f5f7;
+  --muted: #aaa9b5;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, "Noto Sans Thai", sans-serif;
+}
+button, input, textarea, select { font: inherit; }
+button {
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 10px;
+  color: white;
+  background: var(--red);
+  font-weight: bold;
+  cursor: pointer;
+}
+button:active { transform: scale(.98); }
+input, textarea, select {
+  display: block;
+  width: 100%;
+  margin: 8px 0 14px;
+  padding: 13px;
+  border: 1px solid #414149;
+  border-radius: 9px;
+  background: #0c0c10;
+  color: white;
+}
+textarea { min-height: 90px; }
+label { display: block; color: #ddd; }
+header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 15px;
+  background: #111116;
+  border-bottom: 1px solid #303038;
+}
+.logo { font-size: 22px; font-weight: 900; color: var(--red); }
+nav { display: flex; flex-wrap: wrap; gap: 6px; }
+nav button { font-size: 12px; padding: 10px; }
+main { max-width: 1050px; padding: 16px; margin: auto; }
+.hidden { display: none !important; }
+.hero {
+  padding: 35px 18px;
+  margin: 12px 0;
+  text-align: center;
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  background: linear-gradient(140deg,#36080d,#111116 75%);
+  background-position: center;
+  background-size: cover;
+}
+.hero h1 { color: var(--red); font-size: 34px; }
+.section {
+  margin: 15px 0;
+  padding: 17px;
+  border: 1px solid #303038;
+  border-radius: 13px;
+  background: #15151b;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(210px,1fr));
+  gap: 13px;
+}
+.product {
+  overflow: hidden;
+  border: 1px solid #35353d;
+  border-radius: 12px;
+  background: #101015;
+}
+.product img {
+  width: 100%;
+  height: 165px;
+  object-fit: cover;
+  display: block;
+}
+.product-content { padding: 13px; }
+.price { color: var(--red); font-size: 22px; font-weight: bold; }
+.muted { color: var(--muted); font-size: 13px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; }
+.row > * { flex: 1; min-width: 120px; }
+.item { padding: 12px 0; border-bottom: 1px solid #333; overflow-wrap: anywhere; }
+footer { padding: 25px; text-align: center; color: #888; }
+#notice {
+  display: none;
+  position: fixed;
+  z-index: 200000;
+  bottom: 15px;
+  left: 15px;
+  right: 15px;
+  padding: 15px;
+  border: 1px solid #555;
+  border-radius: 10px;
+  background: #222;
+}
+#notice.show { display: block; }
+.modal-bg {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  background: #000d;
+}
+.modal {
+  width: 100%;
+  max-width: 450px;
+  padding: 20px;
+  border: 1px solid #444;
+  border-radius: 14px;
+  background: #17161e;
+}
+
+/* หน้าปิดปรับปรุงตามภาพ */
+#maintenance {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+  background: #08090c;
+  color: #f5f5f7;
+}
+#maintenance.active { display: flex; }
+.maint-box {
+  width: 100%;
+  max-width: 690px;
+  padding: 35px 22px;
+  text-align: center;
+  border: 1px solid #48232e;
+  border-radius: 27px;
+  background: #17161e;
+  box-shadow: 0 0 35px #ff20380b;
+}
+.maint-icon { font-size: 60px; margin-bottom: 15px; }
+.maint-box h1 {
+  margin: 15px 0 25px;
+  font-size: clamp(28px,5vw,43px);
+}
+.maint-message {
+  color: #aaa9b5;
+  font-size: 17px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.countdown {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 24px 0;
+  font-size: clamp(18px,4vw,27px);
+  font-weight: bold;
+}
+.countdown strong { color: white; }
+#maintFinishText { color: #aaa9b5; font-size: 13px; }
+.maint-box input {
+  background: #0c0c10;
+  color: white;
+  border-color: #49303a;
+}
+.maint-box button {
+  background: var(--red);
+  border-radius: 13px;
+  padding: 16px 20px;
+}
+.maint-error { min-height: 22px; color: #ff6578; }
+.maint-small { color: #8f8e99; font-size: 12px; line-height: 1.6; }
+@media(max-width:480px) {
+  header { align-items: flex-start; flex-direction: column; }
+  .hero h1 { font-size: 27px; }
+  .maint-box { padding: 28px 16px; }
+}
+</style>
+</head>
+
+<body>
+
+<header id="siteHeader">
+  <div class="logo">⚡ PC ZONE STORE</div>
+  <nav>
+    <button onclick="showPage('home')">หน้าร้าน</button>
+    <button onclick="showPage('orders')">คำสั่งซื้อ</button>
+    <button onclick="showPage('account')">สมาชิก</button>
+    <button onclick="adminLogin()">หลังบ้าน</button>
+  </nav>
+</header>
+
+<main id="homePage">
+  <section class="hero" id="storeHero">
+    <h1 id="storeTitle">PC ZONE STORE</h1>
+    <p id="storeBio">ยินดีต้อนรับสู่ร้าน PC ZONE</p>
+    <button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">ดูสินค้า</button>
+  </section>
+
+  <div class="grid">
+    <section class="section">
+      <p class="muted">สินค้าทั้งหมด</p>
+      <h2 id="productCount">0</h2>
+    </section>
+    <section class="section">
+      <p class="muted">คำสั่งซื้อของคุณ</p>
+      <h2 id="orderCount">0</h2>
+    </section>
+  </div>
+
+  <section class="section">
+    <h2>🎟️ โค้ดโปรโมชั่น</h2>
+    <input id="promoInput" placeholder="กรอกโค้ดโปรโมชั่น">
+    <button onclick="redeemPromo()">ยืนยันโค้ด</button>
+  </section>
+
+  <section class="section" id="products">
+    <h2>🛍️ สินค้าทั้งหมด</h2>
+    <div id="productList" class="grid"></div>
+  </section>
+
+  <section class="section">
+    <h2>📞 ติดต่อร้านค้า</h2>
+    <div class="row">
+      <button onclick="window.open('https://www.instagram.com/taweiopp__17/','_blank')">Instagram</button>
+      <button onclick="window.open('https://discord.gg/QJJSaAyz','_blank')">Discord</button>
+    </div>
+  </section>
+</main>
+
+<main id="accountPage" class="hidden">
+  <section class="section">
+    <h2>👤 บัญชีสมาชิก</h2>
+    <div id="accountInfo"></div>
+    <div id="accountForm">
+      <label>ชื่อผู้ใช้</label>
+      <input id="username" autocomplete="username">
+      <label>รหัสผ่าน</label>
+      <input id="userPassword" type="password" autocomplete="current-password">
+      <div class="row">
+        <button onclick="registerUser()">สมัครสมาชิก</button>
+        <button onclick="loginUser()">เข้าสู่ระบบ</button>
+      </div>
+    </div>
+    <button id="logoutButton" class="hidden" onclick="logoutUser()">ออกจากระบบ</button>
+  </section>
+</main>
+
+<main id="ordersPage" class="hidden">
+  <section class="section">
+    <h2>📦 ประวัติคำสั่งซื้อ</h2>
+    <div id="orderHistory"></div>
+  </section>
+</main>
+
+<main id="adminPage" class="hidden">
+  <section class="hero">
+    <h1>ADMIN CONTROL PANEL</h1>
+    <button onclick="adminLogout()">ออกจากหลังบ้าน</button>
+  </section>
+
+  <section class="section">
+    <h2>⚙️ ตั้งค่าร้าน</h2>
+    <label>ชื่อร้าน</label>
+    <input id="settingName">
+    <label>ข้อความหน้าร้าน</label>
+    <textarea id="settingBio"></textarea>
+    <label>ลิงก์รูปพื้นหลัง</label>
+    <input id="settingBanner" placeholder="https://example.com/banner.jpg">
+    <button onclick="saveSettings()">บันทึกการตั้งค่า</button>
+  </section>
+
+  <section class="section">
+    <h2>➕ เพิ่ม / แก้ไขสินค้า</h2>
+    <input id="editProductId" type="hidden">
+
+    <label>ชื่อสินค้า</label>
+    <input id="pName">
+
+    <label>ราคา</label>
+    <input id="pPrice" type="number" min="0">
+
+    <label>ลิงก์รูปสินค้า</label>
+    <input id="pImage" placeholder="https://example.com/image.jpg">
+
+    <label>ลิงก์สินค้า</label>
+    <input id="pLink" placeholder="https://example.com">
+
+    <label>รายละเอียดสินค้า</label>
+    <textarea id="pDescription"></textarea>
+
+    <label>คีย์สินค้า 1</label><input id="key1">
+    <label>คีย์สินค้า 2</label><input id="key2">
+    <label>คีย์สินค้า 3</label><input id="key3">
+    <label>คีย์สินค้า 4</label><input id="key4">
+    <label>คีย์สินค้า 5</label><input id="key5">
+
+    <div class="row">
+      <button onclick="saveProduct()">บันทึกสินค้า</button>
+      <button onclick="clearProductForm()">ล้างช่อง</button>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>📋 จัดการสินค้า</h2>
+    <div id="adminProductList"></div>
+  </section>
+
+  <section class="section">
+    <h2>🎟️ จัดการโปรโมชั่น</h2>
+    <label>รหัสโปรโมชั่น</label>
+    <input id="newPromoCode" placeholder="เช่น FREE100">
+    <label>จำนวนเครดิตทดลอง</label>
+    <input id="newPromoAmount" type="number" min="0" value="100">
+    <button onclick="addPromo()">เพิ่มโปรโมชั่น</button>
+    <div id="promoList"></div>
+  </section>
+
+  <section class="section">
+    <h2>🚧 ปิดปรับปรุงเว็บไซต์</h2>
+
+    <label>หัวข้อแจ้งปรับปรุง</label>
+    <input id="maintTitle" placeholder="ปิดปรับปรุงระบบ">
+
+    <label>ข้อความแจ้งปรับปรุง</label>
+    <textarea id="maintMessage" placeholder="ขณะนี้ร้านค้ากำลังปรับปรุงชั่วคราว"></textarea>
+
+    <label>ระยะเวลา</label>
+    <div class="row">
+      <input id="maintDuration" type="number" min="1" value="10">
+      <select id="maintUnit">
+        <option value="1">วินาที</option>
+        <option value="60">นาที</option>
+        <option value="3600">ชั่วโมง</option>
+        <option value="86400">วัน</option>
+        <option value="2592000">30 วัน</option>
+        <option value="31536000">ปี (365 วัน)</option>
+      </select>
+    </div>
+
+    <label>รหัสผ่านเข้าเว็บไซต์ระหว่างปรับปรุง</label>
+    <input id="maintPassword" type="password" placeholder="กำหนดรหัสผ่าน">
+
+    <div class="row">
+      <button onclick="startMaintenance()">🔴 เปิดโหมดปิดปรับปรุง</button>
+      <button onclick="stopMaintenance()">🟢 ยกเลิกปิดปรับปรุง</button>
+    </div>
+    <p id="maintStatus" class="muted"></p>
+  </section>
+
+  <section class="section">
+    <h2>🔔 คำสั่งซื้อทั้งหมด</h2>
+    <div id="adminOrders"></div>
+  </section>
+
+  <section class="section">
+    <h2>🧾 บันทึกกิจกรรม</h2>
+    <div id="eventLog"></div>
+    <button onclick="clearLogs()">ล้างบันทึก</button>
+  </section>
+</main>
+
+<footer>© <span id="year"></span> PC ZONE STORE</footer>
+
+<div id="purchaseModal" class="modal-bg hidden">
+  <div class="modal">
+    <h2>🛒 ยืนยันคำสั่งซื้อ</h2>
+    <div id="purchaseInfo"></div>
+    <label>UID / ชื่อในเกม</label>
+    <input id="buyerUID" placeholder="กรอก UID">
+    <label>รายละเอียดเพิ่มเติม</label>
+    <textarea id="buyerNote"></textarea>
+    <div class="row">
+      <button onclick="confirmPurchase()">ยืนยันซื้อ</button>
+      <button onclick="closePurchase()">ยกเลิก</button>
+    </div>
+    <p class="muted">ระบบเครดิตและคำสั่งซื้อเป็นระบบทดลอง</p>
+  </div>
+</div>
+
+<div id="adminLoginModal" class="modal-bg hidden">
+  <div class="modal">
+    <h2>🔐 เข้าสู่ระบบแอดมิน</h2>
+    <label>รหัสผ่านแอดมิน</label>
+    <input id="adminPassword" type="password" autocomplete="current-password">
+    <div class="row">
+      <button onclick="checkAdminPassword()">ยืนยันรหัสผ่าน</button>
+      <button onclick="closeAdminLogin()">ยกเลิก</button>
+    </div>
+  </div>
+</div>
+
+<!-- หน้าปิดปรับปรุง -->
+<div id="maintenance">
+  <div class="maint-box">
+    <div class="maint-icon">🛠️</div>
+
+    <h1 id="maintDisplayTitle">ปิดปรับปรุงระบบ</h1>
+
+    <p id="maintDisplayMessage" class="maint-message">
+      ขณะนี้ร้านค้ากำลังปรับปรุงชั่วคราว
+    </p>
+
+    <div class="countdown">
+      <span>เหลือ</span>
+      <strong id="cdDays">0</strong><span>วัน</span>
+      <strong id="cdHours">0</strong><span>ชม.</span>
+      <strong id="cdMinutes">0</strong><span>นาที</span>
+      <strong id="cdSeconds">0</strong><span>วินาที</span>
+    </div>
+
+    <p id="maintFinishText"></p>
+
+    <p class="maint-message">
+      กรอกรหัสผ่านเพื่อเข้าเว็บไซต์ก่อนเวลาหมด
+    </p>
+
+    <form id="maintenancePasswordForm">
+      <input
+        id="maintenancePasswordInput"
+        type="password"
+        placeholder="กรอกรหัสผ่านเข้าเว็บไซต์"
+        autocomplete="current-password"
+        required
+      >
+      <button type="submit" style="width:100%">ยืนยันรหัสผ่าน</button>
+    </form>
+
+    <p id="maintenanceError" class="maint-error"></p>
+    <p class="maint-small">หากไม่มีรหัสผ่าน กรุณารอจนกว่าการปรับปรุงจะเสร็จสิ้น</p>
+  </div>
+</div>
+
+<div id="notice" role="status"></div>
+
+<script>
+"use strict";
+
+/*
+ PC ZONE STORE
+ รหัสแอดมินเริ่มต้น: we12
+
+ ข้อจำกัด:
+ เว็บไซต์นี้เป็นตัวอย่างแบบ static ใช้ localStorage
+ ไม่ใช่ระบบชำระเงินหรือระบบส่งสินค้าจริง
+*/
+
+const ADMIN_PASSWORD = "we12";
+const DB_KEY = "pczone_store_complete_v4";
+
+let db;
+let currentUser = null;
+let isAdmin = false;
+let selectedProductId = null;
+let maintenanceTimer = null;
+let noticeTimer = null;
+
+const $ = id => document.getElementById(id);
+
+function defaultDB() {
+  return {
+    settings: {
+      name: "PC ZONE STORE",
+      bio: "ยินดีต้อนรับสู่ร้าน PC ZONE",
+      banner: "",
+      maintenance: {
+        active: false,
+        title: "ปิดปรับปรุงระบบ",
+        message: "ขณะนี้ร้านค้ากำลังปรับปรุงชั่วคราว",
+        endAt: 0,
+        password: ""
+      }
+    },
+    products: [],
+    users: [],
+    orders: [],
+    promos: [],
+    logs: []
+  };
+}
+
+function loadDB() {
+  try {
+    const raw = localStorage.getItem(DB_KEY);
+    if (!raw) return defaultDB();
+
+    const data = JSON.parse(raw);
+    const base = defaultDB();
+
+    return {
+      ...base,
+      ...data,
+      settings: {
+        ...base.settings,
+        ...(data.settings || {}),
+        maintenance: {
+          ...base.settings.maintenance,
+          ...(data.settings?.maintenance || {})
+        }
+      },
+      products: Array.isArray(data.products) ? data.products : [],
+      users: Array.isArray(data.users) ? data.users : [],
+      orders: Array.isArray(data.orders) ? data.orders : [],
+      promos: Array.isArray(data.promos) ? data.promos : [],
+      logs: Array.isArray(data.logs) ? data.logs : []
+    };
+  } catch {
+    return defaultDB();
+  }
+}
+
+db = loadDB();
+
+function saveDB() {
+  try {
+    localStorage.setItem(DB_KEY, JSON.stringify(db));
+    return true;
+  } catch {
+    notify("บันทึกข้อมูลไม่สำเร็จ");
+    return false;
+  }
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;",
+    '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+
+function safeURL(value) {
+  try {
+    const u = new URL(value, location.href);
+    return ["http:", "https:"].includes(u.protocol) ? u.href : "";
+  } catch {
+    return "";
+  }
+}
+
+function notify(message) {
+  $("notice").textContent = message;
+  $("notice").classList.add("show");
+  clearTimeout(noticeTimer);
+  noticeTimer = setTimeout(() => $("notice").classList.remove("show"), 3000);
+}
+
+function logEvent(message) {
+  db.logs.unshift({
+    message,
+    time: new Date().toLocaleString("th-TH")
+  });
+  db.logs = db.logs.slice(0, 100);
+  saveDB();
+}
+
+function showPage(page) {
+  if (page === "admin" && !isAdmin) {
+    adminLogin();
+    return;
+  }
+
+  ["home", "account", "orders", "admin"].forEach(p => {
+    $(p + "Page").classList.toggle("hidden", p !== page);
+  });
+
+  if (page === "account") renderAccount();
+  if (page === "orders") renderOrders();
+  if (page === "admin") renderAdmin();
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function render() {
+  $("storeTitle").textContent = db.settings.name;
+  $("storeBio").textContent = db.settings.bio;
+  document.title = db.settings.name;
+  $("productCount").textContent = db.products.length;
+
+  $("orderCount").textContent = currentUser
+    ? db.orders.filter(o => o.username === currentUser.username).length
+    : 0;
+
+  const banner = safeURL(db.settings.banner);
+  $("storeHero").style.backgroundImage = banner
+    ? `linear-gradient(#08090cbb,#08090cdd),url("${banner}")`
+    : "";
+
+  $("productList").innerHTML = db.products.length
+    ? db.products.map(p => {
+        const img = safeURL(p.image);
+        return `
+          <article class="product">
+            ${img ? `<img src="${escapeHTML(img)}" alt="${escapeHTML(p.name)}" loading="lazy">` : ""}
+            <div class="product-content">
+              <h3>${escapeHTML(p.name)}</h3>
+              <p class="price">${Number(p.price).toLocaleString("th-TH")} บาท</p>
+              <p>${escapeHTML(p.description || "")}</p>
+              <button style="width:100%" onclick="openPurchase('${escapeHTML(p.id)}')">สั่งซื้อสินค้า</button>
+            </div>
+          </article>`;
+      }).join("")
+    : '<p class="muted">ยังไม่มีสินค้า กรุณาเพิ่มสินค้าจากหลังบ้าน</p>';
+
+  renderAccount();
+  applyMaintenance();
+}
+
+function renderAccount() {
+  if (!currentUser) {
+    $("accountInfo").innerHTML = '<p class="muted">กรุณาสมัครสมาชิกหรือเข้าสู่ระบบ</p>';
+    $("accountForm").classList.remove("hidden");
+    $("logoutButton").classList.add("hidden");
+    return;
+  }
+
+  $("accountInfo").innerHTML = `
+    <p>ชื่อสมาชิก: <strong>${escapeHTML(currentUser.username)}</strong></p>
+    <p>เครดิตทดลอง: <strong>${Number(currentUser.balance).toLocaleString("th-TH")} บาท</strong></p>
+  `;
+  $("accountForm").classList.add("hidden");
+  $("logoutButton").classList.remove("hidden");
+}
+
+function registerUser() {
+  const username = $("username").value.trim();
+  const password = $("userPassword").value;
+
+  if (username.length < 3 || password.length < 4) {
+    notify("ชื่อผู้ใช้อย่างน้อย 3 ตัว และรหัสผ่านอย่างน้อย 4 ตัว");
+    return;
+  }
+
+  if (db.users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+    notify("ชื่อผู้ใช้นี้มีแล้ว");
+    return;
+  }
+
+  currentUser = {
+    id: crypto.randomUUID(),
+    username,
+    password,
+    balance: 100,
+    usedPromos: []
+  };
+
+  db.users.push(currentUser);
+  saveDB();
+  logEvent("สมัครสมาชิก " + username);
+  render();
+  notify("สมัครสมาชิกสำเร็จ ได้เครดิตทดลอง 100 บาท");
+}
+
+function loginUser() {
+  const username = $("username").value.trim();
+  const password = $("userPassword").value;
+  const user = db.users.find(u =>
+    u.username.toLowerCase() === username.toLowerCase() &&
+    u.password === password
+  );
+
+  if (!user) {
+    notify("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
+    return;
+  }
+
+  currentUser = user;
+  render();
+  notify("เข้าสู่ระบบสำเร็จ");
+}
+
+function logoutUser() {
+  currentUser = null;
+  render();
+  notify("ออกจากระบบแล้ว");
+}
+
+function openPurchase(id) {
+  selectedProductId = id;
+  const p = db.products.find(x => x.id === id);
+  if (!p) return;
+
+  $("purchaseInfo").innerHTML = `
+    <h3>${escapeHTML(p.name)}</h3>
+    <p class="price">${Number(p.price).toLocaleString("th-TH")} บาท</p>
+    <p>${escapeHTML(p.description || "")}</p>
+  `;
+  $("buyerUID").value = "";
+  $("buyerNote").value = "";
+  $("purchaseModal").classList.remove("hidden");
+}
+
+function closePurchase() {
+  $("purchaseModal").classList.add("hidden");
+}
+
+function confirmPurchase() {
+  db = loadDB();
+
+  const p = db.products.find(x => x.id === selectedProductId);
+  if (!p) return;
+
+  if (!currentUser) {
+    closePurchase();
+    showPage("account");
+    notify("กรุณาเข้าสู่ระบบก่อน");
+    return;
+  }
+
+  const user = db.users.find(u => u.id === currentUser.id);
+  if (!user) {
+    notify("ไม่พบสมาชิก กรุณาเข้าสู่ระบบใหม่");
+    currentUser = null;
+    return;
+  }
+
+  const price = Number(p.price);
+  if (!Number.isFinite(price) || price < 0) {
+    notify("ราคาสินค้าไม่ถูกต้อง");
+    return;
+  }
+
+  if (Number(user.balance) < price) {
+    notify("เครดิตทดลองไม่เพียงพอ");
+    return;
+  }
+
+  user.balance -= price;
+  currentUser = user;
+
+  db.orders.unshift({
+    id: crypto.randomUUID(),
+    username: user.username,
+    productId: p.id,
+    productName: p.name,
+    price,
+    uid: $("buyerUID").value.trim(),
+    note: $("buyerNote").value.trim(),
+    time: new Date().toISOString(),
+    status: "รับคำสั่งซื้อแล้ว",
+    link: safeURL(p.link)
+  });
+
+  saveDB();
+  logEvent("สั่งซื้อ " + p.name + " โดย " + user.username);
+  closePurchase();
+  render();
+  notify("บันทึกคำสั่งซื้อทดลองแล้ว");
+}
+
+function renderOrders() {
+  const orders = currentUser
+    ? db.orders.filter(o => o.username === currentUser.username)
+    : [];
+
+  $("orderHistory").innerHTML = !currentUser
+    ? '<p>กรุณาเข้าสู่ระบบก่อน</p>'
+    : orders.length
+      ? orders.map(o => `
+        <div class="item">
+          <strong>${escapeHTML(o.productName)}</strong>
+          — ${Number(o.price).toLocaleString("th-TH")} บาท
+          <p>สถานะ: ${escapeHTML(o.status)}</p>
+          <p class="muted">${escapeHTML(new Date(o.time).toLocaleString("th-TH"))}</p>
+          ${o.uid ? `<p>UID: ${escapeHTML(o.uid)}</p>` : ""}
+        </div>
+      `).join("")
+      : '<p>ยังไม่มีคำสั่งซื้อ</p>';
+}
+
+function adminLogin() {
+  $("adminPassword").value = "";
+  $("adminLoginModal").classList.remove("hidden");
+}
+
+function closeAdminLogin() {
+  $("adminLoginModal").classList.add("hidden");
+}
+
+function checkAdminPassword() {
+  if ($("adminPassword").value !== ADMIN_PASSWORD) {
+    notify("รหัสผ่านแอดมินไม่ถูกต้อง");
+    return;
+  }
+
+  isAdmin = true;
+  closeAdminLogin();
+  showPage("admin");
+  applyMaintenance();
+  notify("เข้าสู่หลังบ้านแล้ว");
+}
+
+function adminLogout() {
+  isAdmin = false;
+  showPage("home");
+  applyMaintenance();
+  notify("ออกจากระบบแอดมินแล้ว");
+}
+
+function saveSettings() {
+  if (!isAdmin) return;
+
+  db.settings.name = $("settingName").value.trim() || "PC ZONE STORE";
+  db.settings.bio = $("settingBio").value.trim();
+  db.settings.banner = $("settingBanner").value.trim();
+
+  saveDB();
+  logEvent("แก้ไขการตั้งค่าร้าน");
+  render();
+  renderAdmin();
+  notify("บันทึกการตั้งค่าแล้ว");
+}
+
+function clearProductForm() {
+  ["editProductId","pName","pPrice","pImage","pLink","pDescription",
+   "key1","key2","key3","key4","key5"].forEach(id => $(id).value = "");
+}
+
+function saveProduct() {
+  if (!isAdmin) return;
+
+  const name = $("pName").value.trim();
+  const price = Number($("pPrice").value);
+
+  if (!name || $("pPrice").value === "" || !Number.isFinite(price) || price < 0) {
+    notify("กรุณากรอกชื่อและราคาสินค้าให้ถูกต้อง");
+    return;
+  }
+
+  const id = $("editProductId").value;
+  const keys = [1,2,3,4,5].map(n => $("key" + n).value.trim()).filter(Boolean);
+
+  const product = {
+    id: id || crypto.randomUUID(),
+    name,
+    price,
+    image: $("pImage").value.trim(),
+    link: $("pLink").value.trim(),
+    description: $("pDescription").value.trim(),
+    keys
+  };
+
+  if (id) {
+    const index = db.products.findIndex(p => p.id === id);
+    if (index >= 0) db.products[index] = product;
+    else db.products.unshift(product);
+  } else {
+    db.products.unshift(product);
+  }
+
+  saveDB();
+  logEvent("บันทึกสินค้า " + name);
+  clearProductForm();
+  render();
+  renderAdmin();
+  notify("บันทึกสินค้าแล้ว");
+}
+
+function editProduct(id) {
+  if (!isAdmin) return;
+
+  const p = db.products.find(x => x.id === id);
+  if (!p) return;
+
+  $("editProductId").value = p.id;
+  $("pName").value = p.name;
+  $("pPrice").value = p.price;
+  $("pImage").value = p.image || "";
+  $("pLink").value = p.link || "";
+  $("pDescription").value = p.description || "";
+
+  [1,2,3,4,5].forEach((n,i) => {
+    $("key" + n).value = p.keys?.[i] || "";
+  });
+
+  $("pName").scrollIntoView({behavior:"smooth"});
+}
+
+function deleteProduct(id) {
+  if (!isAdmin || !confirm("ยืนยันลบสินค้านี้?")) return;
+
+  db.products = db.products.filter(p => p.id !== id);
+  saveDB();
+  logEvent("ลบสินค้า " + id);
+  render();
+  renderAdmin();
+  notify("ลบสินค้าแล้ว");
+}
+
+function addPromo() {
+  if (!isAdmin) return;
+
+  const code = $("newPromoCode").value.trim().toUpperCase();
+  const amount = Number($("newPromoAmount").value);
+
+  if (!code || !Number.isFinite(amount) || amount < 0) {
+    notify("กรอกโค้ดและจำนวนเครดิตให้ถูกต้อง");
+    return;
+  }
+
+  if (db.promos.some(p => p.code === code)) {
+    notify("มีโค้ดนี้แล้ว");
+    return;
+  }
+
+  db.promos.push({code, amount, active:true});
+  saveDB();
+  logEvent("เพิ่มโปรโมชั่น " + code);
+  renderAdmin();
+  notify("เพิ่มโปรโมชั่นแล้ว");
+}
+
+function redeemPromo() {
+  if (!currentUser) {
+    showPage("account");
+    notify("กรุณาเข้าสู่ระบบก่อน");
+    return;
+  }
+
+  const code = $("promoInput").value.trim().toUpperCase();
+  const promo = db.promos.find(p => p.code === code && p.active);
+
+  if (!promo) {
+    notify("ไม่พบโค้ดโปรโมชั่น");
+    return;
+  }
+
+  const user = db.users.find(u => u.id === currentUser.id);
+  if (!user) return;
+
+  user.usedPromos = user.usedPromos || [];
+
+  if (user.usedPromos.includes(code)) {
+    notify("คุณใช้โค้ดนี้แล้ว");
+    return;
+  }
+
+  user.balance = Number(user.balance || 0) + Number(promo.amount || 0);
+  user.usedPromos.push(code);
+  currentUser = user;
+
+  saveDB();
+  logEvent("ใช้โปรโมชั่น " + code);
+  render();
+  notify("รับเครดิตทดลองสำเร็จ");
+}
+
+function deletePromo(code) {
+  if (!isAdmin) return;
+  db.promos = db.promos.filter(p => p.code !== code);
+  saveDB();
+  renderAdmin();
+  notify("ลบโปรโมชั่นแล้ว");
+}
+
+/* ระบบปิดปรับปรุง */
+function startMaintenance() {
+  if (!isAdmin) return;
+
+  const duration = Number($("maintDuration").value);
+  const unit = Number($("maintUnit").value);
+  const password = $("maintPassword").value;
+
+  if (!Number.isFinite(duration) || duration < 1) {
+    notify("กรุณากำหนดระยะเวลาอย่างน้อย 1");
+    return;
+  }
+
+  if (!password) {
+    notify("กรุณาตั้งรหัสผ่านเข้าเว็บไซต์");
+    return;
+  }
+
+  db.settings.maintenance = {
+    active: true,
+    title: $("maintTitle").value.trim() || "ปิดปรับปรุงระบบ",
+    message: $("maintMessage").value.trim() || "ขณะนี้ร้านค้ากำลังปรับปรุงชั่วคราว",
+    endAt: Date.now() + duration * unit * 1000,
+    password
+  };
+
+  saveDB();
+  logEvent("เปิดโหมดปิดปรับปรุง");
+  applyMaintenance();
+  renderAdmin();
+  notify("เปิดโหมดปิดปรับปรุงแล้ว");
+}
+
+function stopMaintenance() {
+  if (!isAdmin) return;
+
+  db.settings.maintenance.active = false;
+  db.settings.maintenance.endAt = 0;
+
+  saveDB();
+  sessionStorage.removeItem("pczone_maintenance_bypass");
+
+  logEvent("ปิดโหมดปรับปรุง");
+  applyMaintenance();
+  renderAdmin();
+  notify("ยกเลิกโหมดปิดปรับปรุงแล้ว");
+}
+
+$("maintenancePasswordForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+  verifyMaintenancePassword();
+});
+
+function verifyMaintenancePassword() {
+  db = loadDB();
+
+  const m = db.settings.maintenance;
+  const input = $("maintenancePasswordInput").value;
+
+  if (!m.active || Date.now() >= Number(m.endAt)) {
+    m.active = false;
+    saveDB();
+    applyMaintenance();
+    notify("หมดเวลาปรับปรุงแล้ว");
+    return;
+  }
+
+  if (input && input === m.password) {
+    sessionStorage.setItem("pczone_maintenance_bypass", String(m.endAt));
+
+    $("maintenancePasswordInput").value = "";
+    $("maintenanceError").textContent = "";
+
+    applyMaintenance();
+    showPage("home");
+    notify("รหัสผ่านถูกต้อง เข้าสู่เว็บไซต์แล้ว");
+  } else {
+    $("maintenanceError").textContent = "❌ รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่";
+    $("maintenancePasswordInput").value = "";
+    $("maintenancePasswordInput").focus();
+  }
+}
+
+function updateCountdown() {
+  const end = Number(db.settings.maintenance.endAt) || 0;
+  let remaining = Math.max(0, end - Date.now());
+
+  const days = Math.floor(remaining / 86400000);
+  remaining %= 86400000;
+
+  const hours = Math.floor(remaining / 3600000);
+  remaining %= 3600000;
+
+  const minutes = Math.floor(remaining / 60000);
+  remaining %= 60000;
+
+  const seconds = Math.floor(remaining / 1000);
+
+  $("cdDays").textContent = days;
+  $("cdHours").textContent = String(hours).padStart(2,"0");
+  $("cdMinutes").textContent = String(minutes).padStart(2,"0");
+  $("cdSeconds").textContent = String(seconds).padStart(2,"0");
+
+  $("maintFinishText").textContent =
+    "สิ้นสุดการปรับปรุง: " + new Date(end).toLocaleString("th-TH");
+}
+
+function applyMaintenance() {
+  clearInterval(maintenanceTimer);
+  db = loadDB();
+
+  const m = db.settings.maintenance;
+  const bypass = sessionStorage.getItem("pczone_maintenance_bypass");
+
+  const bypassValid =
+    Boolean(bypass) &&
+    Number(bypass) === Number(m.endAt) &&
+    Date.now() < Number(bypass);
+
+  if (m.active && Date.now() >= Number(m.endAt)) {
+    m.active = false;
+    saveDB();
+    logEvent("หมดเวลาปรับปรุงอัตโนมัติ");
+  }
+
+  const active = m.active && Date.now() < Number(m.endAt);
+  const showMaintenance = active && !isAdmin && !bypassValid;
+
+  $("siteHeader").classList.toggle("hidden", showMaintenance);
+  $("homePage").classList.toggle("hidden", showMaintenance);
+  $("accountPage").classList.toggle("hidden", showMaintenance);
+  $("ordersPage").classList.toggle("hidden", showMaintenance);
+  $("adminPage").classList.toggle("hidden", showMaintenance || !isAdmin);
+  $("maintenance").classList.toggle("active", showMaintenance);
+
+  if (!showMaintenance) return;
+
+  $("maintDisplayTitle").textContent = m.title || "ปิดปรับปรุงระบบ";
+  $("maintDisplayMessage").textContent =
+    m.message || "ขณะนี้ร้านค้ากำลังปรับปรุงชั่วคราว";
+
+  updateCountdown();
+
+  maintenanceTimer = setInterval(() => {
+    db = loadDB();
+    const current = db.settings.maintenance;
+
+    if (!current.active || Date.now() >= Number(current.endAt)) {
+      current.active = false;
+      saveDB();
+      clearInterval(maintenanceTimer);
+      applyMaintenance();
+      notify("หมดเวลาปรับปรุงแล้ว");
+      return;
+    }
+
+    updateCountdown();
+  }, 1000);
+}
+
+function renderAdmin() {
+  if (!isAdmin) return;
+
+  $("settingName").value = db.settings.name || "";
+  $("settingBio").value = db.settings.bio || "";
+  $("settingBanner").value = db.settings.banner || "";
+
+  $("maintTitle").value = db.settings.maintenance.title || "";
+  $("maintMessage").value = db.settings.maintenance.message || "";
+
+  $("maintStatus").textContent = db.settings.maintenance.active
+    ? "🔴 กำลังปิดปรับปรุงถึง " + new Date(db.settings.maintenance.endAt).toLocaleString("th-TH")
+    : "🟢 เว็บไซต์ไม่ได้อยู่ในโหมดปรับปรุง";
+
+  $("adminProductList").innerHTML = db.products.length
+    ? db.products.map(p => `
+      <div class="item">
+        <strong>${escapeHTML(p.name)}</strong> — ${Number(p.price).toLocaleString("th-TH")} บาท
+        <p class="muted">มีคีย์ ${p.keys?.length || 0} ช่อง</p>
+        <div class="row">
+          <button onclick="editProduct('${escapeHTML(p.id)}')">แก้ไข</button>
+          <button onclick="deleteProduct('${escapeHTML(p.id)}')">ลบ</button>
+        </div>
+      </div>
+    `).join("")
+    : '<p class="muted">ยังไม่มีสินค้า</p>';
+
+  $("promoList").innerHTML = db.promos.length
+    ? db.promos.map(p => `
+      <div class="item">
+        ${escapeHTML(p.code)} — ${Number(p.amount).toLocaleString("th-TH")} บาท
+        <button onclick="deletePromo('${escapeHTML(p.code)}')">ลบ</button>
+      </div>
+    `).join("")
+    : '<p class="muted">ไม่มีโปรโมชั่น</p>';
+
+  $("adminOrders").innerHTML = db.orders.length
+    ? db.orders.map(o => `
+      <div class="item">
+        <strong>${escapeHTML(o.productName)}</strong> — ${Number(o.price).toLocaleString("th-TH")} บาท
+        <p>สมาชิก: ${escapeHTML(o.username)}</p>
+        <p>UID: ${escapeHTML(o.uid || "-")}</p>
+        <p class="muted">${escapeHTML(new Date(o.time).toLocaleString("th-TH"))}</p>
+        <label>สถานะ</label>
+        <select id="status_${escapeHTML(o.id)}">
+          ${["รับคำสั่งซื้อแล้ว","กำลังดำเนินการ","ส่งสินค้าแล้ว","ยกเลิก"].map(s =>
+            `<option ${o.status === s ? "selected" : ""}>${s}</option>`
+          ).join("")}
+        </select>
+        <button onclick="updateOrderStatus('${escapeHTML(o.id)}')">บันทึกสถานะ</button>
+        ${o.link ? `<p><a target="_blank" rel="noopener noreferrer" href="${escapeHTML(o.link)}" style="color:#ff5367">เปิดลิงก์สินค้า</a></p>` : ""}
+      </div>
+    `).join("")
+    : '<p class="muted">ยังไม่มีคำสั่งซื้อ</p>';
+
+  $("eventLog").innerHTML = db.logs.length
+    ? db.logs.map(l => `
+      <div class="item">
+        ${escapeHTML(l.message)}
+        <p class="muted">${escapeHTML(l.time)}</p>
+      </div>
+    `).join("")
+    : '<p class="muted">ยังไม่มีบันทึก</p>';
+}
+
+function updateOrderStatus(id) {
+  if (!isAdmin) return;
+
+  const order = db.orders.find(o => o.id === id);
+  const select = $("status_" + id);
+  if (!order || !select) return;
+
+  order.status = select.value;
+  saveDB();
+  logEvent("เปลี่ยนสถานะคำสั่งซื้อ " + id);
+  renderAdmin();
+  notify("อัปเดตสถานะแล้ว");
+}
+
+function clearLogs() {
+  if (!isAdmin || !confirm("ยืนยันล้างบันทึกกิจกรรม?")) return;
+  db.logs = [];
+  saveDB();
+  renderAdmin();
+  notify("ล้างบันทึกแล้ว");
+}
+
+$("year").textContent = new Date().getFullYear();
+
+render();
+showPage("home");
+applyMaintenance();
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    db = loadDB();
+    render();
+  }
+});
+
+window.addEventListener("storage", event => {
+  if (event.key === DB_KEY) {
+    db = loadDB();
+    render();
+    if (isAdmin) renderAdmin();
+  }
+});
+</script>
+</body>
+</html>
